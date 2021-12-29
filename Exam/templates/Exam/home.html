@@ -1,0 +1,18 @@
+{% extends 'Exam/base.html' %}
+{% block content %}
+  <h1>
+    Exams
+  </h1>
+
+  <ul>
+    {% if object_list %}
+      {% for exam in object_list %}
+        <li>
+          {{exam.title}} | from {{exam.proctor}}
+        </li>
+      {% endfor %}
+  </ul>
+    {% else %}
+      Create an Exam
+    {% endif %}
+{% endblock %}

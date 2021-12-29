@@ -1,0 +1,15 @@
+{% extends 'Exam/base.html' %}
+{% block content %}
+    <h1>
+        Create Multiple Choice question for {{test.title}}
+    </h1>
+
+    <div class="form-group">
+        <form method="POST">
+            <bold>If not using any possible answers leave them blank</bold>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-secondary"> Save</button>
+        </form>
+    </div>
+{% endblock %}
