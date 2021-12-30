@@ -1,1 +1,1 @@
-web:gunicorn Exam_Django.wsgi
+web: gunicorn Exam_Django.wsgi
