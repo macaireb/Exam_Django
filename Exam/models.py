@@ -18,7 +18,7 @@ class Test(models.Model):
 class FIB_Question(models.Model):
     text = models.CharField(max_length=200)
     correct_answer = models.CharField(max_length=200)
-    user_answer = models.CharField(max_length=200)
+    user_answer = models.CharField(max_length=200, blank=True, null=True)
     exam = models.ForeignKey(Test, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -31,7 +31,7 @@ class FIB_Question(models.Model):
 class TF_Question(models.Model):
     text = models.CharField(max_length=200)
     correct_answer = models.BooleanField()
-    user_answer = models.BooleanField()
+    user_answer = models.BooleanField(blank=True, null=True)
     exam = models.ForeignKey(Test, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -55,7 +55,7 @@ class MC_Question(models.Model):
         four = 4
         five = 5
     text = models.CharField(max_length=200)
-    correct_answer = models.IntegerField(choices=Answers.choices)
+    correct_answer = models.IntegerField(choices=Answers.choices, blank=True, null=True)
     user_answer = models.CharField(max_length=200)
     exam = models.ForeignKey(Test, on_delete=models.CASCADE)
 

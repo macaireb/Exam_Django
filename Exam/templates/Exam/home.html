@@ -8,7 +8,8 @@
     {% if object_list %}
       {% for exam in object_list %}
         <li>
-          {{exam.title}} | from {{exam.proctor}}
+          <a class="btn btn-secondary" href=" {% url 'exam_detail' exam.pk %}">
+            {{exam.title}} </a> | from {{exam.proctor}}
         </li>
       {% endfor %}
   </ul>

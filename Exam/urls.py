@@ -24,4 +24,5 @@ urlpatterns = [
     path('exam/<int:ider>/create_exam', CreateExamView, name='create_exam'),
     path('exam/update_exam', EditExamView.as_view(), name='update_exam'),
     path('exam/<int:ider>/choose_question', ChooseQuestionView, name='choose_question'),
+    path('exam/<int:ider>/exam_detail', ExamDetailView, name='exam_detail'),
 ]

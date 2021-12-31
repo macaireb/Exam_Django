@@ -49,6 +49,9 @@ def CreateTFView(request, ider):
         if form.is_valid():
             form.save()
             return render(request, 'Exam/choose_question_type.html', {'test': test})
+            #return render(request, 'Exam/home.html', {})
+            #eturn reverse_lazy('exam_detail', kwargs={'ider': ider})
+            #return render(request, 'Exam/exam_detail.html', {'ider': ider, 'test': test})
     else:
         form_class = CreateTFForm(initial={'exam': test})
         return render(request, 'Exam/create_TF.html', {'test': test, 'form': form_class})
@@ -69,3 +72,12 @@ def CreateMCView(request, ider):
 def ChooseQuestionView(request, ider):
     test = Test.objects.get(pk=ider)
     return render(request, 'Exam/choose_question_type.html', {'test': test})
+
+
+def ExamDetailView(request, ider):
+    c_exam = Test.objects.get(pk=ider)
+    mcs = MC_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
+    tfs = TF_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
+    fibs = FIB_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
+    return render(request, 'Exam/exam_detail.html', {'mcs': mcs, 'tfs': tfs, 'fibs': fibs, 'test': c_exam})
+

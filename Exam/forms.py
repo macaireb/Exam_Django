@@ -44,8 +44,7 @@ class CreateTFForm(forms.ModelForm):
         widgets = {
             'text': forms.TextInput(attrs={'class': 'form-control',
                                                         'placeholder': 'Enter text of the question'}),
-            'correct_answer': forms.TextInput(attrs={'class': 'form-control',
-                                                        'placeholder': 'Enter the correct answer'}),
+            'correct_answer': forms.CheckboxInput(),
             'exam': forms.Select(attrs={'class': 'form-control'}),
         }
 

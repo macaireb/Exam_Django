@@ -1,17 +1,15 @@
 {% extends 'Exam/base.html' %}
+{% block title %} Register {% endblock %}
 {% block content %}
     <h1>
-        Create Exam
+        Login
     </h1>
-    {% if user.is_authenticated %}
+
     <div class="form-group">
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button class="btn btn-secondary"> Save</button>
+            <button class="btn btn-secondary"> Register</button>
         </form>
     </div>
-    {% else %}
-        <h1> You're not allowed here</h1>
-    {% endif %}
 {% endblock %}

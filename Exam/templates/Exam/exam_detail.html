@@ -1,0 +1,28 @@
+{% extends 'Exam/base.html' %}
+{% block title %} Choose question {% endblock %}
+{% block content %}
+    {% if mcs or tfs or fibs %}
+    <h1> {{exam.title}} detailed view</h1>
+        <ul>
+            {% if mcs %}
+                {% for q in mcs %}
+                    <li>{{q.text}}</li>
+                {% endfor %}
+            {% endif%}
+            {% if tfs %}
+                {% for q in tfs %}
+                    <li>{{q.text}}</li>
+                {% endfor %}
+            {% endif %}
+            {% if fibs %}
+                {% for q in fibs %}
+                    <li>{{q.text}}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    {% else %}
+        <span> No questions on this test </span>
+    {% endif %}
+    <a class="btn btn-secondary" href=" {% url 'choose_question' test.pk %}">Add Question to exam</a>
+
+{% endblock %}

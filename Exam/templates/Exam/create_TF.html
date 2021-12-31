@@ -8,6 +8,8 @@
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
+            <span>If correct answer is true, check the box, if false leave unchecked.</span>
+            </br>
             <button class="btn btn-secondary"> Save</button>
         </form>
     </div>
