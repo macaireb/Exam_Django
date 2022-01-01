@@ -44,9 +44,9 @@ class TF_Question(models.Model):
 class MC_Question(models.Model):
     One = models.CharField(max_length=200)
     Two = models.CharField(max_length=200)
-    Three = models.CharField(max_length=200)
-    Four = models.CharField(max_length=200)
-    Five = models.CharField(max_length=200)
+    Three = models.CharField(max_length=200, blank=True, null=True)
+    Four = models.CharField(max_length=200, blank=True, null=True)
+    Five = models.CharField(max_length=200, blank=True, null=True)
 
     class Answers(models.IntegerChoices):
         one = 1

@@ -1,16 +1,20 @@
 {% extends 'Exam/base.html' %}
 {% block title %} Choose question {% endblock %}
 {% block content %}
-    <h1>
-        Choose which type of question to add or finish creating {{test.title}}
-    </h1>
+    {% if user.is_authenticated %}
+        <h1>
+            Choose which type of question to add or finish creating {{test.title}}
+        </h1>
 
-    <a class="btn btn-secondary" href="{% url 'create_fib' test.pk %}"> Add Fill in the Blank Question </a>
-    </br>
-    <a class="btn btn-secondary" href="{% url 'create_tf' test.pk %}"> Add True or False Question </a>
-    </br>
-    <a class="btn btn-secondary" href="{% url 'create_mc' test.pk %}"> Add Multiple Choice Question </a>
-    </br>
-    <a class="btn btn-secondary" href="{% url 'home' %}"> Finish test </a>
-
+        <a class="btn btn-secondary" href="{% url 'create_fib' test.pk %}"> Add Fill in the Blank Question </a>
+        </br>
+        <a class="btn btn-secondary" href="{% url 'create_tf' test.pk %}"> Add True or False Question </a>
+        </br>
+        <a class="btn btn-secondary" href="{% url 'create_mc' test.pk %}"> Add Multiple Choice Question </a>
+        </br>
+        <a class="btn btn-secondary" href="{% url 'home' %}"> Finish test </a>
+    {% else %}
+        You must <a class="btn btn-secondary" href="{% url 'register'%}"> Register </a>
+        or <a class="btn btn-secondary" href="{% url 'login' %}"> Login </a> to view this page
+    {% endif %}
 {% endblock %}
