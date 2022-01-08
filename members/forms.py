@@ -33,9 +33,9 @@ class EditProfileForm(UserChangeForm):
 
 
 class PasswordChangingForm(PasswordChangeForm):
-    old_password = ReadOnlyPasswordHashField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
-    new_password1 = ReadOnlyPasswordHashField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
-    new_password2 = ReadOnlyPasswordHashField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
+    old_password = forms.CharField(max_length=25, widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
+    new_password1 = forms.CharField(max_length=25, widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
+    new_password2 = forms.CharField(max_length=25, widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
 
     class Meta:
         model = User
