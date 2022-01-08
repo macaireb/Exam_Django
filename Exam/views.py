@@ -12,15 +12,15 @@ class HomeView(ListView):
 
 
 def CreateExamView(request, ider):
-    user = User.objects.get(pk=ider)
+    proctor = User.objects.get(pk=ider)
     if request.method == 'POST':
         form = CreateExam(request.POST)
         if form.is_valid():
             test = form.save()
             return render(request, 'Exam/choose_question_type.html', {'test': test})
     else:
-        form_class = CreateExam(initial={'proctor': user})
-        return render(request, 'Exam/create_exam.html', {'user': user, 'form': form_class})
+        form_class = CreateExam(initial={'proctor': proctor})
+        return render(request, 'Exam/create_exam.html', {'form': form_class})
 
 
 class EditExamView(UpdateView):
@@ -36,7 +36,8 @@ def CreateFIBView(request, ider):
         form = CreateFIBForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'Exam/choose_question_type.html', {'test': test})
+            return ExamDetailView(request, ider)
+            #return render(request, 'Exam/choose_question_type.html', {'test': test})
     else:
         form_class = CreateFIBForm(initial={'exam': test})
         return render(request, 'Exam/create_FIB.html', {'test': test, 'form': form_class})
@@ -48,7 +49,8 @@ def CreateTFView(request, ider):
         form = CreateTFForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'Exam/choose_question_type.html', {'test': test})
+            return ExamDetailView(request, ider)
+            #return render(request, 'Exam/choose_question_type.html', {'test': test})
             #return render(request, 'Exam/home.html', {})
             #eturn reverse_lazy('exam_detail', kwargs={'ider': ider})
             #return render(request, 'Exam/exam_detail.html', {'ider': ider, 'test': test})
@@ -63,7 +65,8 @@ def CreateMCView(request, ider):
         form = CreateFIBForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'Exam/choose_question_type.html', {'test': test})
+            return ExamDetailView(request, ider)
+            #return render(request, 'Exam/choose_question_type.html', {'test': test})
     else:
         form_class = CreateMCForm(initial={'exam': test})
         return render(request, 'Exam/create_MC.html', {'test': test, 'form': form_class})

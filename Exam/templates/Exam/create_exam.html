@@ -12,6 +12,7 @@
         </form>
     </div>
     {% else %}
-        <h1> You're not allowed here</h1>
+        You must <a class="btn btn-secondary" href="{% url 'register'%}"> Register </a>
+        or <a class="btn btn-secondary" href="{% url 'login' %}"> Login </a> to view this page
     {% endif %}
 {% endblock %}
