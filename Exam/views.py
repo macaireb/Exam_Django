@@ -3,6 +3,7 @@ from django.views.generic import ListView, CreateView, UpdateView
 from .models import *
 from .forms import *
 from django.urls import reverse_lazy
+from itertools import chain
 # Create your views here.
 
 
@@ -84,3 +85,26 @@ def ExamDetailView(request, ider):
     fibs = FIB_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
     return render(request, 'Exam/exam_detail.html', {'mcs': mcs, 'tfs': tfs, 'fibs': fibs, 'test': c_exam})
 
+
+def StartExam(request, ider):
+    exam_c = Test.objects.get(pk=ider)
+    if request.user is not None:
+        assigned = Assignment.objects.all().filter(test=exam_c, student=request.user)
+        assignment = Assignment(test=exam_c, student=request.user)
+        if assignment is not assigned:
+            assignment.save()
+        return render(request, 'Exam/start_exam.html', {'assignment': assignment})
+    #create another page when an exam can't be start, use else statement here
+
+
+def AskQuestion(request, ider):
+    assignment = Assignment.objects.get(pk=ider)
+    mcs = MC_Question.objects.all().filter(exam=assignment.test)
+    tfs = TF_Question.objects.all().filter(exam=assignment.test)
+    fibs = FIB_Question.objects.all().filter(exam=assignment.test)
+    questions = list(chain(mcs, tfs, fibs))
+    return render(request, 'Exam/ask_question.html', {'questions': questions})
+
+def ViewAssignments(request, ider):
+    assignments = Assignment.objects.all().filter(student=request.user)
+    return render(request, 'Exam/view_assignments.html', {'assignments': assignments})

@@ -1,0 +1,15 @@
+{% extends 'Exam/base.html' %}
+{% block title %} Choose question {% endblock %}
+{% block content %}
+    {% if assignments %}
+        <ul>
+            <h2>Here are your assignments</h2>
+            {% for assignment in assignments %}
+                <li> <a class="btn btn-secondary" href="{% url 'ask_question' assignment.pk %}">
+                    {{assignment.test.title}}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <span> No tests assigned to this user </span>
+    {% endif %}
+{% endblock %}

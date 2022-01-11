@@ -9,11 +9,16 @@
       {% for exam in object_list %}
         <li>
           <a class="btn btn-secondary" href=" {% url 'exam_detail' exam.pk %}">
-            {{exam.title}} </a> | from {{exam.proctor}}
+            {{exam.title}} </a>
+          <a class="btn btn-primary" href=" {% url 'start_exam' exam.pk %}">Take this exam </a>
+           | Created By: {{exam.proctor}}
         </li>
       {% endfor %}
   </ul>
     {% else %}
       Create an Exam
     {% endif %}
+  {% if user.is_authenticated %}
+    <a class="btn btn-secondary" href="{% url 'view_assignments' user.pk %}">View Assignments</a>
+  {% endif %}
 {% endblock %}

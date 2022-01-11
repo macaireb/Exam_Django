@@ -1,3 +1,5 @@
+from operator import mod
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -13,6 +15,13 @@ class Test(models.Model):
 
     def get_absolute_url(self):
         return reverse('choose_question', args=(self.pk,))
+
+
+class Assignment(models.Model):
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    correct = models.PositiveIntegerField(blank=True, null=True)
+    incorrect = models.PositiveIntegerField(blank=True, null=True)
 
 
 class FIB_Question(models.Model):

@@ -1,0 +1,14 @@
+{% extends 'Exam/base.html' %}
+{% block title %} Choose question {% endblock %}
+{% block content %}
+    {% if questions %}
+        <ul>
+            <h2>Here are the questions</h2>
+            {% for question in questions %}
+                <li>{{question.text}}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <span> No questions on this test </span>
+    {% endif %}
+{% endblock %}

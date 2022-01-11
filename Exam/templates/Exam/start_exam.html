@@ -1,16 +1,18 @@
 {% extends 'Exam/base.html' %}
-{% block title %} Create Exam{% endblock %}
+{% block title %} Take wExam{% endblock %}
 {% block content %}
     <h1>
-        Create Exam
+        Take Exam
     </h1>
     {% if user.is_authenticated %}
     <div class="form-group">
         <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
             <button class="btn btn-secondary"> Save</button>
         </form>
+        {% if assignment %}
+            {{ assignment.student }}
+        {% endif %}
     </div>
     {% else %}
         You must <a class="btn btn-secondary" href="{% url 'register'%}"> Register </a>
