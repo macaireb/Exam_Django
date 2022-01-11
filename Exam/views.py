@@ -88,12 +88,14 @@ def ExamDetailView(request, ider):
 
 def StartExam(request, ider):
     exam_c = Test.objects.get(pk=ider)
-    if request.user is not None:
+    if request.user.is_authenticated:
         assigned = Assignment.objects.all().filter(test=exam_c, student=request.user)
         assignment = Assignment(test=exam_c, student=request.user)
         if assignment is not assigned:
             assignment.save()
         return render(request, 'Exam/start_exam.html', {'assignment': assignment})
+    elif request.user.is_anonymous:
+        return render(request, 'Exam/start_exam.html')
     #create another page when an exam can't be start, use else statement here
 
 
