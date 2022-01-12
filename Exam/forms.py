@@ -41,10 +41,14 @@ class CreateTFForm(forms.ModelForm):
     class Meta:
         model = TF_Question
         fields = ('text', 'correct_answer', 'exam')
+        true_false_choices = (
+            (True, 'Yes'),
+            (False, 'No')
+        )
         widgets = {
             'text': forms.TextInput(attrs={'class': 'form-control',
                                                         'placeholder': 'Enter text of the question'}),
-            'correct_answer': forms.CheckboxInput(),
+            'correct_answer': forms.Select(choices=true_false_choices, attrs={'class': 'form-control'}),
             'exam': forms.Select(attrs={'class': 'form-control'}),
         }
 
