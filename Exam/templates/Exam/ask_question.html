@@ -6,10 +6,7 @@
     <div class="form-group">
         <form method="POST">
             {% csrf_token %}
-            {{question.text}}
-            </br>
-            {{form.user_answer}}
-            {{form.assignment}}
+            {{form}}
             <button class="btn btn-secondary"> Save</button>
         </form>
     </div>

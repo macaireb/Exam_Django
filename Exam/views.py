@@ -5,6 +5,7 @@ from .forms import *
 from django.urls import reverse_lazy
 from itertools import chain
 from django.core.exceptions import ObjectDoesNotExist
+import logging
 # Create your views here.
 
 
@@ -102,28 +103,49 @@ def StartExam(request, ider):
 
 
 def AskQuestion(request, ider):
+    print("Hello user")
     assignment = Assignment.objects.get(pk=ider)
     mcs = MC_Question.objects.all().filter(exam=assignment.test)
     tfs = TF_Question.objects.all().filter(exam=assignment.test)
     fibs = FIB_Question.objects.all().filter(exam=assignment.test)
     questions = list(chain(mcs, tfs, fibs))
+    original_questions = list(chain(mcs, tfs, fibs))
+    logger = logging.getLogger(__name__)
 
     def get_question():
-        q_text = ''
+        print("getting question")
+        q_text = []
         for q in questions:
+            print(q.assignment)
             if q.assignment:
                 questions.pop(questions.index(q))
-                q_text = q.text
-            for ques in questions:
-                if ques.text is q_text: #remove unassigned question from list
-                    questions.pop(questions.index(ques))
+                q_text.append(q.text)
+                print("removed " + q.text)
+        for ques in questions:
+            for que in q_text:
+                if que == ques.text: #remove unassigned question from list
+                    try:
+                        questions.pop(questions.index(ques))
+                        print("removed unassigned" + ques.text)
+                    except ValueError:
+                        pass
         return questions.pop()
     if request.method == 'POST':
         question = get_question()
         if isinstance(question, TF_Question):
-            form = CreateTFForm(request.POST)
+            form = AskTFQuestionForm(request.POST)
+            print(form.is_valid())
+            print(form.cleaned_data)
+            print("However question exam is: " + question.exam.title)
             if form.is_valid():
-                form.save()
+                original = True
+                for i in original_questions:
+                    if i.text == form.cleaned_data['text'] and i.assignment and i.assignment.student == request.user:
+                        original = False
+                        print('Answer is a duplicate, not saving')
+                if original:
+                    form.save()
+                    print('Saved Answered')
                 form_class = AskTFQuestionForm(
                     initial={'assignment': assignment, 'exam': question.exam, 'correct_answer': question.correct_answer,
                              'text': question.text})
@@ -131,7 +153,9 @@ def AskQuestion(request, ider):
     question = get_question()
     if (isinstance(question, TF_Question)):
         #Need a check to see if question already has an assignment
-        form_class = AskTFQuestionForm(initial={'assignment': assignment})
+        form_class = AskTFQuestionForm(initial={'assignment': assignment, 'exam': question.exam, 'correct_answer':
+            question.correct_answer, 'text': question.text})
+        print("Too However question exam is: " + question.exam.title)
     return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
 
 

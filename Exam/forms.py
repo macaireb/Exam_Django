@@ -79,7 +79,7 @@ class CreateMCForm(forms.ModelForm):
 class AskTFQuestionForm(forms.ModelForm):
     class Meta:
         model = TF_Question
-        fields = ('user_answer', 'assignment', 'text', 'correct_answer', 'exam',)
+        fields = ('text', 'user_answer', 'assignment', 'correct_answer', 'exam',)
         true_false_choices = (
             (True, 'Yes'),
             (False, 'No')
@@ -87,4 +87,7 @@ class AskTFQuestionForm(forms.ModelForm):
         widgets = {
             'user_answer': forms.Select(choices=true_false_choices, attrs={'class': 'form-control'}),
             'assignment': forms.Select(attrs={'class': 'form-control'}),
+            'text': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
+            'correct_answer': forms.HiddenInput(),
+            'exam': forms.HiddenInput(),
         }
