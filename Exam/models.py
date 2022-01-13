@@ -23,12 +23,16 @@ class Assignment(models.Model):
     correct = models.PositiveIntegerField(blank=True, null=True)
     incorrect = models.PositiveIntegerField(blank=True, null=True)
 
+    def __str__(self):
+        return self.test.title + ' | ' + self.student.username
+
 
 class FIB_Question(models.Model):
     text = models.CharField(max_length=200)
     correct_answer = models.CharField(max_length=200)
     user_answer = models.CharField(max_length=200, blank=True, null=True)
     exam = models.ForeignKey(Test, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.text
@@ -42,6 +46,7 @@ class TF_Question(models.Model):
     correct_answer = models.BooleanField()
     user_answer = models.BooleanField(blank=True, null=True)
     exam = models.ForeignKey(Test, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.text
@@ -67,6 +72,7 @@ class MC_Question(models.Model):
     correct_answer = models.IntegerField(choices=Answers.choices, blank=True, null=True)
     user_answer = models.CharField(max_length=200)
     exam = models.ForeignKey(Test, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.text

@@ -4,6 +4,7 @@ from .models import *
 from .forms import *
 from django.urls import reverse_lazy
 from itertools import chain
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 
 
@@ -89,11 +90,12 @@ def ExamDetailView(request, ider):
 def StartExam(request, ider):
     exam_c = Test.objects.get(pk=ider)
     if request.user.is_authenticated:
-        assigned = Assignment.objects.all().filter(test=exam_c, student=request.user)
-        assignment = Assignment(test=exam_c, student=request.user)
-        if assignment is not assigned:
-            assignment.save()
-        return render(request, 'Exam/start_exam.html', {'assignment': assignment})
+        try:
+            assigned = Assignment.objects.get(test=exam_c, student=request.user)
+        except ObjectDoesNotExist:
+            assigned = Assignment(test=exam_c, student=request.user)
+            assigned.save()
+        return render(request, 'Exam/start_exam.html', {'assignment': assigned})
     elif request.user.is_anonymous:
         return render(request, 'Exam/start_exam.html')
     #create another page when an exam can't be start, use else statement here
@@ -105,7 +107,33 @@ def AskQuestion(request, ider):
     tfs = TF_Question.objects.all().filter(exam=assignment.test)
     fibs = FIB_Question.objects.all().filter(exam=assignment.test)
     questions = list(chain(mcs, tfs, fibs))
-    return render(request, 'Exam/ask_question.html', {'questions': questions})
+
+    def get_question():
+        q_text = ''
+        for q in questions:
+            if q.assignment:
+                questions.pop(questions.index(q))
+                q_text = q.text
+            for ques in questions:
+                if ques.text is q_text: #remove unassigned question from list
+                    questions.pop(questions.index(ques))
+        return questions.pop()
+    if request.method == 'POST':
+        question = get_question()
+        if isinstance(question, TF_Question):
+            form = CreateTFForm(request.POST)
+            if form.is_valid():
+                form.save()
+                form_class = AskTFQuestionForm(
+                    initial={'assignment': assignment, 'exam': question.exam, 'correct_answer': question.correct_answer,
+                             'text': question.text})
+                return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
+    question = get_question()
+    if (isinstance(question, TF_Question)):
+        #Need a check to see if question already has an assignment
+        form_class = AskTFQuestionForm(initial={'assignment': assignment})
+    return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
+
 
 def ViewAssignments(request, ider):
     assignments = Assignment.objects.all().filter(student=request.user)

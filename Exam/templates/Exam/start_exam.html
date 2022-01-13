@@ -5,14 +5,7 @@
         Take Exam
     </h1>
     {% if user.is_authenticated %}
-    <div class="form-group">
-        <form method="POST">
-            {% csrf_token %}
-            <button class="btn btn-secondary"> Save</button>
-        </form>
-        {% if assignment %}
-            {{ assignment.student }}
-        {% endif %}
+        <a class="btn btn-primary" href="{% url 'ask_question' assignment.pk %}" >Start Exam</a>
     </div>
     {% else %}
         You must <a class="btn btn-secondary" href="{% url 'register'%}"> Register </a>

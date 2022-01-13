@@ -1,13 +1,18 @@
 {% extends 'Exam/base.html' %}
 {% block title %} Choose question {% endblock %}
 {% block content %}
-    {% if questions %}
-        <ul>
-            <h2>Here are the questions</h2>
-            {% for question in questions %}
-                <li>{{question.text}}</li>
-            {% endfor %}
-        </ul>
+    {% if question %}
+        <h2>Please answer the question:</h2>
+    <div class="form-group">
+        <form method="POST">
+            {% csrf_token %}
+            {{question.text}}
+            </br>
+            {{form.user_answer}}
+            {{form.assignment}}
+            <button class="btn btn-secondary"> Save</button>
+        </form>
+    </div>
     {% else %}
         <span> No questions on this test </span>
     {% endif %}
