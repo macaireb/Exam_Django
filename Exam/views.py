@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView
+from django.contrib.auth.models import User
 from .models import *
 from .forms import *
 from django.urls import reverse_lazy
@@ -162,3 +163,26 @@ def AskQuestion(request, ider):
 def ViewAssignments(request, ider):
     assignments = Assignment.objects.all().filter(student=request.user)
     return render(request, 'Exam/view_assignments.html', {'assignments': assignments})
+
+def AssignExam(request, ider):
+    users = User.objects.all()
+    exam = Test.objects.get(pk=ider)
+    if request.method == "POST":
+        form = AssignExamForm(request.POST)
+        print(form.is_valid())
+        print(form.cleaned_data)
+        if form.is_valid():
+            duplicate = Assignment.objects.all().filter(
+                student=request.POST.get("student", ''), test=request.POST.get("test", ''))
+            print(not duplicate)
+            if not duplicate:
+                form.save()
+            mcs = MC_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
+            tfs = TF_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
+            fibs = FIB_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
+            return render(request, 'Exam/exam_detail.html', {'mcs': mcs, 'tfs': tfs, 'fibs': fibs, 'test': exam})
+    else:
+        form_class = AssignExamForm()
+        form_class.fields['student'].choices = [(user.pk, user.username) for user in users]
+        form_class.fields['test'].initial = exam
+        return render(request, 'Exam/assign_exam.html', {'form': form_class})

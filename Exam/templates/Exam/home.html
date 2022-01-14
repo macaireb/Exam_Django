@@ -9,9 +9,7 @@
       {% for exam in object_list %}
         <li>
           <a class="btn btn-secondary" href=" {% url 'exam_detail' exam.pk %}">
-            {{exam.title}} </a>
-          <a class="btn btn-primary" href=" {% url 'start_exam' exam.pk %}">Take this exam </a>
-           | Created By: {{exam.proctor}}
+            {{exam.title}} </a> | Created By: {{exam.proctor}}
         </li>
       {% endfor %}
   </ul>

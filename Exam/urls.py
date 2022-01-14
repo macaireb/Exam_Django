@@ -28,4 +28,5 @@ urlpatterns = [
     path('exam/<int:ider>/start_exam', StartExam, name='start_exam'),
     path('exam/<int:ider>/ask_question', AskQuestion, name='ask_question'),
     path('exam/<int:ider>/view_assignments', ViewAssignments, name='view_assignments'),
+    path('exam/<int:ider>/assign_exam', AssignExam, name='assign_exam'),
 ]

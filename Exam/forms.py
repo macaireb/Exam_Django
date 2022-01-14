@@ -91,3 +91,15 @@ class AskTFQuestionForm(forms.ModelForm):
             'correct_answer': forms.HiddenInput(),
             'exam': forms.HiddenInput(),
         }
+
+
+class AssignExamForm(forms.ModelForm):
+    class Meta:
+        model = Assignment
+        fields = ('student', 'test', 'correct', 'incorrect',)
+        widgets = {
+            'student': forms.Select(attrs={'class': 'form-control'}),
+            'test': forms.Select(attrs={'class': 'form-control'}),
+            'correct': forms.HiddenInput(),
+            'incorrect': forms.HiddenInput(),
+        }

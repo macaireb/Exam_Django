@@ -2,7 +2,7 @@
 {% block title %} Choose question {% endblock %}
 {% block content %}
     {% if mcs or tfs or fibs %}
-    <h1> {{exam.title}} Exam detailed view</h1>
+    <h1> {{test.title}} Exam detailed view</h1>
         <ul>
             {% if mcs %}
                 {% for q in mcs %}
@@ -20,11 +20,15 @@
                 {% endfor %}
             {% endif %}
         </ul>
+    {% if user.is_authenticated %}
+    <a class="btn btn-primary" href=" {% url 'start_exam' test.pk %}">Take this exam </a>
+    <a class="btn btn-secondary" href=" {% url 'choose_question' test.pk %}">Add Question to exam</a>
+    <a class="btn btn-primary" href=" {% url 'assign_exam' test.pk %}">Assign this exam to users</a>
+    {% endif %}
+
     {% else %}
         <span> No questions on this test </span>
     {% endif %}
-    {% if user.is_authenticated %}
-    <a class="btn btn-secondary" href=" {% url 'choose_question' test.pk %}">Add Question to exam</a>
-    {% endif %}
+
 
 {% endblock %}
