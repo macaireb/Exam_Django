@@ -93,6 +93,20 @@ class AskTFQuestionForm(forms.ModelForm):
         }
 
 
+class AskFIBQuestionForm(forms.ModelForm):
+    class Meta:
+        model = FIB_Question
+        fields = ('text', 'user_answer', 'assignment', 'correct_answer', 'exam',)
+        widgets = {
+            'user_answer': forms.TextInput(attrs={'class': 'form-control',
+                                                        'placeholder': 'Enter text of the answer'}),
+            'assignment': forms.Select(attrs={'class': 'form-control'}),
+            'text': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
+            'correct_answer': forms.HiddenInput(),
+            'exam': forms.HiddenInput(),
+        }
+
+
 class AssignExamForm(forms.ModelForm):
     class Meta:
         model = Assignment

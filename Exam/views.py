@@ -83,9 +83,9 @@ def ChooseQuestionView(request, ider):
 
 def ExamDetailView(request, ider):
     c_exam = Test.objects.get(pk=ider)
-    mcs = MC_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
-    tfs = TF_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
-    fibs = FIB_Question.objects.all().filter(exam=Test.objects.get(pk=ider))
+    mcs = MC_Question.objects.all().filter(exam=Test.objects.get(pk=ider), assignment=None)
+    tfs = TF_Question.objects.all().filter(exam=Test.objects.get(pk=ider), assignment=None)
+    fibs = FIB_Question.objects.all().filter(exam=Test.objects.get(pk=ider), assignment=None)
     return render(request, 'Exam/exam_detail.html', {'mcs': mcs, 'tfs': tfs, 'fibs': fibs, 'test': c_exam})
 
 
@@ -124,16 +124,24 @@ def AskQuestion(request, ider):
                 print("removed " + q.text)
         for ques in questions:
             for que in q_text:
-                if que == ques.text: #remove unassigned question from list
+                if que == ques.text: #remove duplicate unassigned question from list
                     try:
                         questions.pop(questions.index(ques))
                         print("removed unassigned" + ques.text)
                     except ValueError:
                         pass
-        return questions.pop()
+        try:
+            return questions.pop()
+        except IndexError:
+            return None
+
     if request.method == 'POST':
         question = get_question()
-        if isinstance(question, TF_Question):
+        print("question boolean: " + str(question is None))
+        print(question)
+        if question is None:
+            return HomeView.as_view()(request)
+        elif isinstance(question, TF_Question) or isinstance(question, FIB_Question):
             form = AskTFQuestionForm(request.POST)
             print(form.is_valid())
             print(form.cleaned_data)
@@ -147,22 +155,38 @@ def AskQuestion(request, ider):
                 if original:
                     form.save()
                     print('Saved Answered')
-                form_class = AskTFQuestionForm(
-                    initial={'assignment': assignment, 'exam': question.exam, 'correct_answer': question.correct_answer,
-                             'text': question.text})
+                if isinstance(question, TF_Question):
+                    form_class = AskTFQuestionForm(
+                        initial={'assignment': assignment, 'exam': question.exam,
+                                 'correct_answer': question.correct_answer,
+                                 'text': question.text})
+                if isinstance(question, FIB_Question):
+                    form_class = AskTFQuestionForm(
+                        initial={'assignment': assignment, 'exam': question.exam,
+                                 'correct_answer': question.correct_answer,
+                                 'text': question.text})
                 return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
     question = get_question()
-    if (isinstance(question, TF_Question)):
+    if isinstance(question, TF_Question):
+        if question is None:
+            HomeView.as_view()(request)
         #Need a check to see if question already has an assignment
         form_class = AskTFQuestionForm(initial={'assignment': assignment, 'exam': question.exam, 'correct_answer':
             question.correct_answer, 'text': question.text})
         print("Too However question exam is: " + question.exam.title)
-    return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
+    if isinstance(question, FIB_Question):
+        if question is None:
+            HomeView.as_view()(request)
+        elif question:
+            form_class = AskFIBQuestionForm(initial={'assignment': assignment, 'exam': question.exam, 'correct_answer':
+            question.correct_answer, 'text': question.text})
+            return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
 
 
 def ViewAssignments(request, ider):
     assignments = Assignment.objects.all().filter(student=request.user)
     return render(request, 'Exam/view_assignments.html', {'assignments': assignments})
+
 
 def AssignExam(request, ider):
     users = User.objects.all()
