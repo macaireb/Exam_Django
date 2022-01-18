@@ -100,10 +100,27 @@ class AskFIBQuestionForm(forms.ModelForm):
         widgets = {
             'user_answer': forms.TextInput(attrs={'class': 'form-control',
                                                         'placeholder': 'Enter text of the answer'}),
-            'assignment': forms.Select(attrs={'class': 'form-control'}),
             'text': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
+            'assignment': forms.Select(attrs={'class': 'form-control'}),
             'correct_answer': forms.HiddenInput(),
             'exam': forms.HiddenInput(),
+        }
+
+
+class AskMCQuestionForm(forms.ModelForm):
+    class Meta:
+        model = MC_Question
+        fields = ('text', 'user_answer', 'assignment', 'correct_answer', 'exam',)
+        empty_choices = ((1, 'One'),
+                         (2, 'Two')
+                         )
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
+            'user_answer': forms.Select(attrs={'class': 'form-control'}),
+            'assignment': forms.Select(attrs={'class': 'form-control'}),
+            'correct_answer': forms.HiddenInput(),
+            'exam': forms.HiddenInput(),
+
         }
 
 

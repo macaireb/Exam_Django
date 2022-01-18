@@ -66,7 +66,7 @@ def CreateTFView(request, ider):
 def CreateMCView(request, ider):
     test = Test.objects.get(pk=ider)
     if request.method == 'POST':
-        form = CreateFIBForm(request.POST)
+        form = CreateMCForm(request.POST)
         if form.is_valid():
             form.save()
             return ExamDetailView(request, ider)
@@ -111,76 +111,120 @@ def AskQuestion(request, ider):
     fibs = FIB_Question.objects.all().filter(exam=assignment.test)
     questions = list(chain(mcs, tfs, fibs))
     original_questions = list(chain(mcs, tfs, fibs))
-    logger = logging.getLogger(__name__)
 
     def get_question():
         print("getting question")
         q_text = []
         for q in questions:
-            print(q.assignment)
+            print(q.text)
             if q.assignment:
-                questions.pop(questions.index(q))
+                print("removed " + str(questions.index(q)) + q.text)
                 q_text.append(q.text)
-                print("removed " + q.text)
-        for ques in questions:
-            for que in q_text:
+                questions.pop(questions.index(q))
+        for que in q_text:
+            for ques in questions:
+                print(que + ' ' + ques.text)
                 if que == ques.text: #remove duplicate unassigned question from list
                     try:
+                        print("removed unassigned " + str(questions.index(ques)) + ques.text)
                         questions.pop(questions.index(ques))
-                        print("removed unassigned" + ques.text)
                     except ValueError:
-                        pass
+                        print("Got a value error")
         try:
             return questions.pop()
         except IndexError:
+            print("There's no question to return!")
             return None
 
     if request.method == 'POST':
         question = get_question()
-        print("question boolean: " + str(question is None))
-        print(question)
-        if question is None:
-            return HomeView.as_view()(request)
-        elif isinstance(question, TF_Question) or isinstance(question, FIB_Question):
+        print("Question is: " + question.text)
+        if question == None:
+            print("Trying to return to home page")
+            return ExamDetailView(request, assignment.test.pk)
+        elif isinstance(question, TF_Question):
             form = AskTFQuestionForm(request.POST)
-            print(form.is_valid())
-            print(form.cleaned_data)
-            print("However question exam is: " + question.exam.title)
-            if form.is_valid():
-                original = True
-                for i in original_questions:
-                    if i.text == form.cleaned_data['text'] and i.assignment and i.assignment.student == request.user:
-                        original = False
-                        print('Answer is a duplicate, not saving')
-                if original:
-                    form.save()
-                    print('Saved Answered')
-                if isinstance(question, TF_Question):
-                    form_class = AskTFQuestionForm(
-                        initial={'assignment': assignment, 'exam': question.exam,
-                                 'correct_answer': question.correct_answer,
-                                 'text': question.text})
-                if isinstance(question, FIB_Question):
-                    form_class = AskTFQuestionForm(
-                        initial={'assignment': assignment, 'exam': question.exam,
-                                 'correct_answer': question.correct_answer,
-                                 'text': question.text})
+        elif isinstance(question, FIB_Question):
+            form = AskFIBQuestionForm(request.POST)
+        elif isinstance(question, MC_Question):
+            form = AskMCQuestionForm(request.POST)
+        if form.is_valid():
+            original = True
+            for i in original_questions:
+                if i.text == form.cleaned_data['text'] and i.assignment and i.assignment.student == request.user:
+                    original = False
+                    print('Answer is a duplicate, not saving')
+            if original:
+                form.save()
+                print('Saved Answered')
+            if isinstance(question, TF_Question):
+                form_class = AskTFQuestionForm(
+                    initial={'assignment': assignment, 'exam': question.exam,
+                             'correct_answer': question.correct_answer,
+                             'text': question.text})
+                return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
+            if isinstance(question, FIB_Question):
+                form_class = AskFIBQuestionForm(
+                    initial={'assignment': assignment, 'exam': question.exam,
+                             'correct_answer': question.correct_answer,
+                             'text': question.text})
+                return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
+            if isinstance(question, MC_Question):
+                form_class = AskMCQuestionForm(
+                    initial={'assignment': assignment, 'exam': question.exam,
+                             'correct_answer': question.correct_answer,
+                             'text': question.text})
+                mc_choices = []
+                if question.One:
+                    mc_choices.append((1, question.One))
+                if question.Two:
+                    mc_choices.append((2, question.Two))
+                if question.Three:
+                    mc_choices.append((3, question.Three))
+                if question.Four:
+                    mc_choices.append((4, question.Four))
+                if question.Five:
+                    mc_choices.append((5, question.Five))
+                mc_choices = tuple(mc_choices)
+                form_class.fields['user_answer'].choices = mc_choices
                 return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
     question = get_question()
+    if question is None:
+        print("Trying to go home")
+        return ExamDetailView(request, assignment.test.pk)
     if isinstance(question, TF_Question):
-        if question is None:
-            HomeView.as_view()(request)
         #Need a check to see if question already has an assignment
         form_class = AskTFQuestionForm(initial={'assignment': assignment, 'exam': question.exam, 'correct_answer':
             question.correct_answer, 'text': question.text})
         print("Too However question exam is: " + question.exam.title)
+        return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
     if isinstance(question, FIB_Question):
-        if question is None:
-            HomeView.as_view()(request)
-        elif question:
-            form_class = AskFIBQuestionForm(initial={'assignment': assignment, 'exam': question.exam, 'correct_answer':
+        form_class = AskFIBQuestionForm(initial={'assignment': assignment, 'exam': question.exam, 'correct_answer':
             question.correct_answer, 'text': question.text})
-            return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
+        return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
+    if isinstance(question, MC_Question):
+        print("Is multiple choice question")
+        form_class = AskMCQuestionForm()
+        mc_choices = []
+        if question.One:
+            mc_choices.append(tuple((1, question.One)))
+        if question.Two:
+            mc_choices.append(tuple((2, question.Two)))
+        if question.Three:
+            mc_choices.append(tuple((3, question.Three)))
+        if question.Four:
+            mc_choices.append(tuple((4, question.Four)))
+        if question.Five:
+            mc_choices.append(tuple((5, question.Five)))
+        mc_choices = tuple(mc_choices)
+        print(mc_choices)
+        form_class.fields['user_answer'].widget.choices = mc_choices
+        form_class.fields['assignment'].initial = assignment
+        form_class.fields['exam'].initial = question.exam
+        form_class.fields['correct_answer'].initial = question.correct_answer
+        form_class.fields['text'].initial = question.text
+        print("About to render page for MC question")
+        return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
 
 
 def ViewAssignments(request, ider):
