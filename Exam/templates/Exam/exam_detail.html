@@ -6,17 +6,17 @@
         <ul>
             {% if mcs %}
                 {% for q in mcs %}
-                    <li>{{q.text}}</li>
+                    <li>{{q.text}}<a class="btn btn-secondary" href=" {% url 'delete_mc' q.pk %}">Delete</a></li>
                 {% endfor %}
             {% endif%}
             {% if tfs %}
                 {% for q in tfs %}
-                    <li>{{q.text}}</li>
+                    <li>{{q.text}}<a class="btn btn-secondary" href=" {% url 'delete_tf' q.pk %}">Delete</a></li>
                 {% endfor %}
             {% endif %}
             {% if fibs %}
                 {% for q in fibs %}
-                    <li>{{q.text}}</li>
+                    <li>{{q.text}}<a class="btn btn-secondary" href=" {% url 'delete_fib' q.pk %}">Delete</a></li>
                 {% endfor %}
             {% endif %}
         </ul>
@@ -25,7 +25,7 @@
     {% if user.is_authenticated %}
         <a class="btn btn-secondary" href=" {% url 'choose_question' test.pk %}">Add Question to exam</a>
         <a class="btn btn-primary" href=" {% url 'assign_exam' test.pk %}">Assign this exam to users</a>
-
+        <a class="btn btn-secondary" href=" {% url 'delete_exam' test.pk %}">Delete this exam</a>
     {% else %}
         <span> No questions on this test </span>
     {% endif %}

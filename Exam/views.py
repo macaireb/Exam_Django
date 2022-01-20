@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.models import User
 from .models import *
 from .forms import *
@@ -137,8 +137,12 @@ def AskQuestion(request, ider):
             return None
 
     if request.method == 'POST':
+        #Need to take care of this problem later, but I believe questions are being asked twice. Once for the original
+        #Then an additional time because if method==POST get_question is called before the original question was saved
+        #So it sees the question it used last time still with no assignment and asks it again.
         question = get_question()
-        print("Question is: " + question.text)
+        if question:
+            print("Question is: " + question.text)
         if question == None:
             print("Trying to return to home page")
             return ExamDetailView(request, assignment.test.pk)
@@ -254,3 +258,58 @@ def AssignExam(request, ider):
         form_class.fields['student'].choices = [(user.pk, user.username) for user in users]
         form_class.fields['test'].initial = exam
         return render(request, 'Exam/assign_exam.html', {'form': form_class})
+
+
+def DeleteExam(request, ider):
+    a = Test.objects.get(pk=ider)
+    MC_Question.objects.all().filter(exam=a, assignment=None, user_answer=None).delete()
+    TF_Question.objects.all().filter(exam=a, assignment=None, user_answer=None).delete()
+    FIB_Question.objects.all().filter(exam=a, assignment=None, user_answer=None).delete()
+    Test.objects.get(pk=ider).delete()
+    return render(request, 'Exam/delete_exam.html', {'test': a})
+
+
+def Delete_TF_Question(request, ider):
+    a = TF_Question.objects.get(pk=ider)
+    print("Trying to delete TF")
+    if request.method == 'POST':
+        form = delete_question(request.POST)
+        print("Is form valid: " + str(form.is_valid()))
+        if form.is_valid():
+            delete = form.cleaned_data
+            delete = delete.get('delete')
+            print(str(delete) + " delete")
+            if delete:
+                print("attempting actual TF delete")
+                TF_Question.objects.get(pk=ider).delete()
+            return ExamDetailView(request, a.exam.pk)
+    else:
+        return render(request, 'Exam/delete_TF.html', {'form': delete_question(), 'pk': ider})
+
+
+def Delete_MC_Question(request, ider):
+    a = MC_Question.objects.get(pk=ider)
+    if request.method == 'POST':
+        form = delete_question(request.POST)
+        if form.is_valid():
+            delete = form.cleaned_data
+            delete = delete.get('delete')
+            if delete:
+                MC_Question.objects.get(pk=ider).delete()
+            return ExamDetailView(request, a.exam.pk)
+    else:
+        return render(request, 'Exam/delete_MC.html', {'form': delete_question(), 'pk': ider})
+
+
+def Delete_FIB_Question(request, ider):
+    a = FIB_Question.objects.get(pk=ider)
+    if request.method == 'POST':
+        form = delete_question(request.POST)
+        if form.is_valid():
+            delete = form.cleaned_data
+            delete = delete.get('delete')
+            if delete:
+                FIB_Question.objects.get(pk=ider).delete()
+            return ExamDetailView(request, a.exam.pk)
+    else:
+        return render(request, 'Exam/delete_FIB.html', {'form': delete_question(), 'pk': ider})

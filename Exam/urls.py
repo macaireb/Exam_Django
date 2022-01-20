@@ -29,4 +29,8 @@ urlpatterns = [
     path('exam/<int:ider>/ask_question', AskQuestion, name='ask_question'),
     path('exam/<int:ider>/view_assignments', ViewAssignments, name='view_assignments'),
     path('exam/<int:ider>/assign_exam', AssignExam, name='assign_exam'),
+    path('exam/<int:ider>/delete_exam', DeleteExam, name='delete_exam'),
+    path('exam/<int:ider>/delete_tf', Delete_TF_Question, name='delete_tf'),
+    path('exam/<int:ider>/delete_mc', Delete_MC_Question, name='delete_mc'),
+    path('exam/<int:ider>/delete_fib', Delete_FIB_Question, name='delete_fib'),
 ]

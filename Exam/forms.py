@@ -111,9 +111,6 @@ class AskMCQuestionForm(forms.ModelForm):
     class Meta:
         model = MC_Question
         fields = ('text', 'user_answer', 'assignment', 'correct_answer', 'exam',)
-        empty_choices = ((1, 'One'),
-                         (2, 'Two')
-                         )
         widgets = {
             'text': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
             'user_answer': forms.Select(attrs={'class': 'form-control'}),
@@ -133,4 +130,22 @@ class AssignExamForm(forms.ModelForm):
             'test': forms.Select(attrs={'class': 'form-control'}),
             'correct': forms.HiddenInput(),
             'incorrect': forms.HiddenInput(),
+        }
+
+
+class delete_question(forms.Form):
+    delete_choices = (
+        (True, 'Yes'),
+        (False, 'No')
+    )
+    delete = forms.ChoiceField(choices=delete_choices)
+
+    class Meta:
+        fields = ('delete',)
+        delete_choices = (
+            (True, 'Yes'),
+            (False, 'No')
+        )
+        widgets = {
+            'delete': forms.Select(choices=delete_choices, attrs={'class': 'form-control'}),
         }
