@@ -22,7 +22,7 @@ urlpatterns = [
     path('exam/<int:ider>/create_tf', CreateTFView, name='create_tf'),
     path('exam/<int:ider>/create_mc', CreateMCView, name='create_mc'),
     path('exam/<int:ider>/create_exam', CreateExamView, name='create_exam'),
-    path('exam/update_exam', EditExamView.as_view(), name='update_exam'),
+    path('exam/edit_exam/<int:pk>', EditExamView.as_view(), name='edit_exam'),
     path('exam/<int:ider>/choose_question', ChooseQuestionView, name='choose_question'),
     path('exam/<int:ider>/exam_detail', ExamDetailView, name='exam_detail'),
     path('exam/<int:ider>/start_exam', StartExam, name='start_exam'),
@@ -33,4 +33,7 @@ urlpatterns = [
     path('exam/<int:ider>/delete_tf', Delete_TF_Question, name='delete_tf'),
     path('exam/<int:ider>/delete_mc', Delete_MC_Question, name='delete_mc'),
     path('exam/<int:ider>/delete_fib', Delete_FIB_Question, name='delete_fib'),
+    path('exam/edit_tf/<int:pk>', Edit_TF.as_view(), name='edit_tf'),
+    path('exam/edit_mc/<int:pk>', Edit_MC.as_view(), name='edit_mc'),
+    path('exam/edit_fib/<int:pk>', Edit_FIB.as_view(), name='edit_fib'),
 ]

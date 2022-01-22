@@ -1,7 +1,7 @@
 {% extends 'Exam/base.html' %}
 {% block content %}
     <h1>
-        Create True/False question for {{test.title}}
+        Edit question
     </h1>
 
     <div class="form-group">
@@ -9,7 +9,7 @@
             {% csrf_token %}
             {{ form.as_p }}
             </br>
-            <button class="btn btn-secondary"> Save</button>
+            <button class="btn btn-secondary"> Save changes</button>
         </form>
     </div>
 {% endblock %}

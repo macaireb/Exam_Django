@@ -29,7 +29,7 @@ def CreateExamView(request, ider):
 
 class EditExamView(UpdateView):
     model = Test
-    template_name = 'Exam/update_exam.html'
+    template_name = 'Exam/edit_exam.html'
     form_class = UpdateExam
     success_url = reverse_lazy('home')
 
@@ -284,7 +284,7 @@ def Delete_TF_Question(request, ider):
                 TF_Question.objects.get(pk=ider).delete()
             return ExamDetailView(request, a.exam.pk)
     else:
-        return render(request, 'Exam/delete_TF.html', {'form': delete_question(), 'pk': ider})
+        return render(request, 'Exam/delete_tf.html', {'form': delete_question(), 'pk': ider})
 
 
 def Delete_MC_Question(request, ider):
@@ -298,7 +298,7 @@ def Delete_MC_Question(request, ider):
                 MC_Question.objects.get(pk=ider).delete()
             return ExamDetailView(request, a.exam.pk)
     else:
-        return render(request, 'Exam/delete_MC.html', {'form': delete_question(), 'pk': ider})
+        return render(request, 'Exam/delete_mc.html', {'form': delete_question(), 'pk': ider})
 
 
 def Delete_FIB_Question(request, ider):
@@ -312,4 +312,24 @@ def Delete_FIB_Question(request, ider):
                 FIB_Question.objects.get(pk=ider).delete()
             return ExamDetailView(request, a.exam.pk)
     else:
-        return render(request, 'Exam/delete_FIB.html', {'form': delete_question(), 'pk': ider})
+        return render(request, 'Exam/delete_fib.html', {'form': delete_question(), 'pk': ider})
+
+
+class Edit_TF(UpdateView):
+    model = TF_Question
+    template_name = 'Exam/edit_question.html'
+    form_class = edit_tf_form
+    success_url = reverse_lazy('home')
+
+
+class Edit_MC(UpdateView):
+    model = MC_Question
+    template_name = 'Exam/edit_question.html'
+    form_class = edit_mc_form
+    success_url = reverse_lazy('home')
+
+class Edit_FIB(UpdateView):
+    model = FIB_Question
+    template_name = 'Exam/edit_question.html'
+    form_class = edit_fib_form
+    success_url = reverse_lazy('home')

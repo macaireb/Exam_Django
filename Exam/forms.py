@@ -149,3 +149,51 @@ class delete_question(forms.Form):
         widgets = {
             'delete': forms.Select(choices=delete_choices, attrs={'class': 'form-control'}),
         }
+
+
+class edit_tf_form(forms.ModelForm):
+    class Meta:
+        model = TF_Question
+        fields = ('text', 'correct_answer')
+        true_false_choices = (
+            (True, 'Yes'),
+            (False, 'No')
+        )
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control',
+                                                        'placeholder': 'Enter text of the question'}),
+            'correct_answer': forms.Select(choices=true_false_choices, attrs={'class': 'form-control'}),
+        }
+
+
+class edit_mc_form(forms.ModelForm):
+    class Meta:
+        model = MC_Question
+        fields = ('text', 'One', 'Two', 'Three', 'Four',
+                  'Five', 'correct_answer')
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control',
+                                           'placeholder': 'Enter text of the question'}),
+            'One': forms.TextInput(attrs={'class': 'form-control',
+                                          'placeholder': 'Enter text of possible answer 1'}),
+            'Two': forms.TextInput(attrs={'class': 'form-control',
+                                          'placeholder': 'Enter text of possible answer 2'}),
+            'Three': forms.TextInput(attrs={'class': 'form-control',
+                                            'placeholder': 'Enter text of possible answer 3'}),
+            'Four': forms.TextInput(attrs={'class': 'form-control',
+                                           'placeholder': 'Enter text of possible answer 4'}),
+            'Five': forms.TextInput(attrs={'class': 'form-control',
+                                           'placeholder': 'Enter text of possible answer 5'}),
+            'correct_answer': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+class edit_fib_form(forms.ModelForm):
+    class Meta:
+        model = FIB_Question
+        fields = ('text', 'correct_answer')
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control',
+                                                        'placeholder': 'Enter text of the question'}),
+            'correct_answer': forms.TextInput(attrs={'class': 'form-control',
+                                                        'placeholder': 'Enter the correct answer'}),
+        }
