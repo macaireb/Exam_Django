@@ -231,11 +231,6 @@ def AskQuestion(request, ider):
         return render(request, 'Exam/ask_question.html', {'question': question, 'form': form_class})
 
 
-def ViewAssignments(request, ider):
-    assignments = Assignment.objects.all().filter(student=request.user)
-    return render(request, 'Exam/view_assignments.html', {'assignments': assignments})
-
-
 def AssignExam(request, ider):
     users = User.objects.all()
     exam = Test.objects.get(pk=ider)
@@ -328,8 +323,135 @@ class Edit_MC(UpdateView):
     form_class = edit_mc_form
     success_url = reverse_lazy('home')
 
+
 class Edit_FIB(UpdateView):
     model = FIB_Question
     template_name = 'Exam/edit_question.html'
     form_class = edit_fib_form
     success_url = reverse_lazy('home')
+
+
+def view_assignments(request):
+    assignments = Assignment.objects.all().filter(student=request.user)
+    return render(request, 'Exam/view_assignments.html', {'assignments': assignments})
+
+
+def score_assignment(request, ider):
+    assignment = Assignment.objects.get(pk=ider)
+    tfs = TF_Question.objects.all().filter(assignment=assignment)
+    fibs = FIB_Question.objects.all().filter(assignment=assignment)
+    mcs = MC_Question.objects.all().filter(assignment=assignment)
+    questions = list(chain(mcs, tfs, fibs))
+
+    def score_tf(question):
+        if question.user_answer is not None:
+            if question.user_answer == question.correct_answer:
+                print(question.text + ' is correct')
+                if assignment.correct is None:
+                    assignment.correct = 1
+                elif assignment.correct > 0:
+                    assignment.correct = assignment.correct + 1
+            elif question.user_answer != question.correct_answer:
+                print(question.text + ' is incorrect')
+                if assignment.incorrect is None:
+                    assignment.incorrect = 1
+                elif assignment.incorrect > 0:
+                    assignment.incorrect = assignment.incorrect + 1
+
+    #Will need to update score_mc when there admins are able to allow multiple questions to be correct
+    def score_mc(question):
+        if question.user_answer is not None:
+            if int(question.correct_answer) is int(question.user_answer):
+                print(question.text + ' is correct')
+                if assignment.correct is None:
+                    assignment.correct = 1
+                elif assignment.correct > 0:
+                    assignment.correct = assignment.correct + 1
+            elif int(question.correct_answer) is not int(question.user_answer):
+                print(question.text + ' is incorrect')
+                if assignment.incorrect is None:
+                    assignment.incorrect = 1
+                elif assignment.incorrect > 0:
+                    assignment.incorrect = assignment.incorrect + 1
+
+    def score_fib(question):
+        if question.user_answer is not None:
+            ua = question.user_answer.lower()
+            ca = question.correct_answer.lower()
+            ua = ua.replace(' the ', '')
+            ca = ca.replace(' the ', '')
+            ua = ua.replace(' a ', '')
+            ca = ca.replace(' a ', '')
+            ua = ua.replace('\'', '')
+            ca = ca.replace('\'', '')
+            ua = ua.replace(',', '')
+            ca = ca.replace(',', '')
+            ua = ua.replace(' ', '')
+            ca = ca.replace(' ', '')
+            if ua == ca:
+                print(question.text + ' is correct')
+                if assignment.correct is None:
+                    assignment.correct = 1
+                elif assignment.correct > 0:
+                    assignment.correct = assignment.correct + 1
+            if ua != ca:
+                print(question.text + ' is incorrect')
+                if assignment.incorrect is None:
+                    assignment.incorrect = 1
+                elif assignment.incorrect > 0:
+                    assignment.incorrect = assignment.incorrect + 1
+
+    if assignment.correct is None and assignment.incorrect is None:
+        if tfs:
+            print("trying to score TF questions")
+            for tf in tfs:
+                score_tf(tf)
+        if mcs:
+            print("trying to score MC questions")
+            for mc in mcs:
+                score_mc(mc)
+        if fibs:
+            print("trying to score FIB questions")
+            for fib in fibs:
+                score_fib(fib)
+    if assignment.incorrect is None:
+        assignment.incorrect = 0
+    if assignment.correct is None:
+        assignment.correct = 0
+    assignment.save()
+    print(str(assignment.incorrect) + str(assignment.correct))
+    return render(request, 'Exam/score_assignment.html', {'assignment': assignment, 'questions': questions})
+
+
+def retake_assignment(request, ider):
+    old_assignment = Assignment.objects.get(pk=ider)
+    assignment = old_assignment
+    tfs = TF_Question.objects.all().filter(assignment=assignment)
+    fibs = FIB_Question.objects.all().filter(assignment=assignment)
+    mcs = MC_Question.objects.all().filter(assignment=assignment)
+    questions = list(chain(mcs, tfs, fibs))
+    old_questions = questions
+    assignment.pk = None
+    assignment.correct = None
+    assignment.incorrect = None
+    assignment.save()
+    for i in range(len(questions)):
+        questions[i].user_answer = None
+        questions[i].assignment = assignment
+        questions[i].text = old_questions[i].text
+        questions[i].correct_answer = old_questions[i].correct_answer
+        questions[i].exam = old_questions.exam
+        if isinstance(questions[i], MC_Question):
+            questions[i].One = old_questions[i].One
+            if old_questions[i].Two:
+                questions[i].Two = old_questions[i].Two
+            if old_questions[i].Three:
+                questions[i].Three = old_questions[i].Three
+            if old_questions[i].Four:
+                questions[i].Four = old_questions[i].Four
+            if old_questions[i].Five:
+                questions[i].Five = old_questions[i].Five
+
+        questions[i].pk = None
+        questions[i].save()
+    return AskQuestion(request, assignment.pk)

@@ -35,6 +35,9 @@
           {% endif %}
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href=" {% url 'view_assignments' %}">View your assignments</a>
+      </li>
     {% else %}
       <li class="nav-item">
         <a class="nav-link" href=" {% url 'login' %}">Login</a>

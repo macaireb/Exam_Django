@@ -27,8 +27,8 @@ urlpatterns = [
     path('exam/<int:ider>/exam_detail', ExamDetailView, name='exam_detail'),
     path('exam/<int:ider>/start_exam', StartExam, name='start_exam'),
     path('exam/<int:ider>/ask_question', AskQuestion, name='ask_question'),
-    path('exam/<int:ider>/view_assignments', ViewAssignments, name='view_assignments'),
     path('exam/<int:ider>/assign_exam', AssignExam, name='assign_exam'),
+    path('exam/view_assignments', view_assignments, name='view_assignments'),
     path('exam/<int:ider>/delete_exam', DeleteExam, name='delete_exam'),
     path('exam/<int:ider>/delete_tf', Delete_TF_Question, name='delete_tf'),
     path('exam/<int:ider>/delete_mc', Delete_MC_Question, name='delete_mc'),
@@ -36,4 +36,6 @@ urlpatterns = [
     path('exam/edit_tf/<int:pk>', Edit_TF.as_view(), name='edit_tf'),
     path('exam/edit_mc/<int:pk>', Edit_MC.as_view(), name='edit_mc'),
     path('exam/edit_fib/<int:pk>', Edit_FIB.as_view(), name='edit_fib'),
+    path('exam/<int:ider>/score_assignment', score_assignment, name='score_assignment'),
+    path('exam/<int:ider>/retake_assignment', retake_assignment, name='retake_assignment'),
 ]

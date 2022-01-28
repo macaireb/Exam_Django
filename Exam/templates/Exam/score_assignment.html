@@ -1,0 +1,23 @@
+{% extends 'Exam/base.html' %}
+{% block title %} Assignment Score {% endblock %}
+{% block content %}
+    <h1>
+        Score for {{assignment.test.title}}
+    </h1>
+    {% if assignment.correct >= 0 and assignment.incorrect >= 0 and questions %}
+        {{assignment.student.username}} scored: {{assignment.correct }} correct
+        </br>
+        {{assignment.incorrect}} incorrect
+        {% for question in questions %}
+            <ul>
+                <li>
+                    {{question.text}}</br>
+                    Your answer: {{question.user_answer}}</br>
+                    correct answer: {{question.correct_answer}}</br>
+                </li>
+            </ul>
+        {% endfor %}
+    {% else %}
+        {{assignment.student.username}} has not taken {{assignment.test.title }} assignment yet
+    {% endif %}
+{% endblock %}

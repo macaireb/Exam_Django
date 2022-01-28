@@ -1,12 +1,25 @@
 {% extends 'Exam/base.html' %}
-{% block title %} Choose question {% endblock %}
+{% block title %} Your assignments {% endblock %}
 {% block content %}
     {% if assignments %}
         <ul>
             <h2>Here are your assignments</h2>
             {% for assignment in assignments %}
-                <li> <a class="btn btn-secondary" href="{% url 'ask_question' assignment.pk %}">
-                    {{assignment.test.title}}</a></li>
+                <li>
+                    {% if assignment.correct or assignment.incorrect %}
+                        Exam has already been taken
+                        <a class="btn btn-secondary" href =" {% url 'retake_assignment' assignment.pk %}">
+                            Retake {{assignment.test.title}} assignment
+                        </a>
+                    {% else %}
+                        <a class="btn btn-primary" href=" {% url 'score_assignment' assignment.pk %}">
+                            Score {{assignment.test.title}} assignment
+                        </a>
+                        <a class="btn btn-primary" href=" {% url 'start_exam' assignment.test.pk %}">Take
+                        {{assignment.test.title}} assignment</a>
+                        <br />
+                    {% endif %}
+                </li>
             {% endfor %}
         </ul>
     {% else %}
