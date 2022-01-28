@@ -431,27 +431,33 @@ def retake_assignment(request, ider):
     mcs = MC_Question.objects.all().filter(assignment=assignment)
     questions = list(chain(mcs, tfs, fibs))
     old_questions = questions
-    assignment.pk = None
-    assignment.correct = None
-    assignment.incorrect = None
-    assignment.save()
-    for i in range(len(questions)):
-        questions[i].user_answer = None
-        questions[i].assignment = assignment
-        questions[i].text = old_questions[i].text
-        questions[i].correct_answer = old_questions[i].correct_answer
-        questions[i].exam = old_questions[i].exam
-        if isinstance(questions[i], MC_Question):
-            questions[i].One = old_questions[i].One
-            if old_questions[i].Two:
-                questions[i].Two = old_questions[i].Two
-            if old_questions[i].Three:
-                questions[i].Three = old_questions[i].Three
-            if old_questions[i].Four:
-                questions[i].Four = old_questions[i].Four
-            if old_questions[i].Five:
-                questions[i].Five = old_questions[i].Five
+    u = old_assignment.student
+    t = old_assignment.test
+    duplicate_assignment = Assignment.objects.all().filter(student=u, test=t, correct=None, incorrect=None)
+    if duplicate_assignment:
+        return view_assignments(request)
+    elif not duplicate_assignment:
+        assignment.pk = None
+        assignment.correct = None
+        assignment.incorrect = None
+        assignment.save()
+        for i in range(len(questions)):
+            questions[i].user_answer = None
+            questions[i].assignment = assignment
+            questions[i].text = old_questions[i].text
+            questions[i].correct_answer = old_questions[i].correct_answer
+            questions[i].exam = old_questions[i].exam
+            if isinstance(questions[i], MC_Question):
+                questions[i].One = old_questions[i].One
+                if old_questions[i].Two:
+                    questions[i].Two = old_questions[i].Two
+                if old_questions[i].Three:
+                    questions[i].Three = old_questions[i].Three
+                if old_questions[i].Four:
+                    questions[i].Four = old_questions[i].Four
+                if old_questions[i].Five:
+                    questions[i].Five = old_questions[i].Five
 
-        questions[i].pk = None
-        questions[i].save()
-    return AskQuestion(request, assignment.pk)
+            questions[i].pk = None
+            questions[i].save()
+        return AskQuestion(request, assignment.pk)
