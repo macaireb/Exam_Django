@@ -440,7 +440,7 @@ def retake_assignment(request, ider):
         questions[i].assignment = assignment
         questions[i].text = old_questions[i].text
         questions[i].correct_answer = old_questions[i].correct_answer
-        questions[i].exam = old_questions.exam
+        questions[i].exam = old_questions[i].exam
         if isinstance(questions[i], MC_Question):
             questions[i].One = old_questions[i].One
             if old_questions[i].Two:

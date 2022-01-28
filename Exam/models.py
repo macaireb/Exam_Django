@@ -70,7 +70,7 @@ class MC_Question(models.Model):
         five = 5
     text = models.CharField(max_length=200)
     correct_answer = models.IntegerField(choices=Answers.choices, blank=True, null=True)
-    user_answer = models.CharField(max_length=200)
+    user_answer = models.CharField(max_length=200, blank=True, null=True)
     exam = models.ForeignKey(Test, on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, blank=True, null=True)
 
